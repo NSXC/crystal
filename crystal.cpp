@@ -50,7 +50,20 @@ void loadCacheFromFile() {
         inFile.close();
     }
 }
+const int GRAPH_WIDTH = 60; 
 
+int totalTraffic = 0; 
+
+void drawTotalTrafficGraph() {
+    system("cls");
+    std::cout << "Total Traffic" << std::endl;
+    std::cout << "-------------" << std::endl;
+
+    int barWidth = static_cast<int>(static_cast<double>(totalTraffic) / GRAPH_WIDTH);
+    std::string bar(barWidth, '#');
+
+    std::cout << "Total: " << bar << " " << totalTraffic << std::endl;
+}
 int main() {
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -85,14 +98,13 @@ int main() {
         WSACleanup();
         return 1;
     }
-
     std::cout << "Cache service started on port " << PORT << std::endl;
-
     while (true) {
         sockaddr_in clientAddr;
         int clientLen = sizeof(clientAddr);
         SOCKET clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientLen);
-
+        totalTraffic += 1;
+        drawTotalTrafficGraph();
         if (clientSocket == INVALID_SOCKET) {
             std::cerr << "Error accepting client connection: " << WSAGetLastError() << std::endl;
             continue;
